@@ -18,17 +18,19 @@ const Shortcuts = require('electron-shortcut');
 // register a shortcut
 Shortcuts.register('Command+1', {toggle: true}, handler);
 
-// register a shorcuts
+// register a shortcuts
 Shortcuts.register([
 	'Command+2',
 	'Command+3'
 ], {toggle: false}, handler);
 
-// register an indivisual shortcut
+// register an individual shortcut
 var shortcut = new Shortcuts.Shortcut('Command+4', {
 	cmdOrCtrl: true,
 	toggle: true
 }, handler);
+
+shortcut.register();
 ```
 
 ## API
