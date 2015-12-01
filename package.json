@@ -1,6 +1,6 @@
 {
   "name": "electron-shortcuts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Helper for global shortcut registering",
   "license": "MIT",
   "repository": "ragingwind/electron-shortcuts",
