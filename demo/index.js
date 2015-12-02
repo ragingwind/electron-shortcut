@@ -57,21 +57,33 @@ app.on('ready', () => {
 	mainWindow = createMainWindow();
 
 	// register a shortcut
-	Shortcuts.register('Command+1', {toggle: true}, app.shortcutPressed);
+	app.shortcuts1 = new Shortcuts('Command+1', {toggle: true}, app.shortcutPressed);
 
-	// register a shorcuts
-	Shortcuts.register([
+	// register a shorcuts with no toggle option
+	app.shortcuts2 = new Shortcuts([
 		'Command+2',
 		'Command+3'
 	], {toggle: false}, app.shortcutPressed);
 
+	// add a new command
+	app.shortcuts2.add('Command+4', app.shortcutPressed);
+
+	// cancel a new command
+	app.shortcuts2.add('Command+5', app.shortcutPressed);
+	app.shortcuts2.remove('Command+5');
+
+	// manuall register
+	app.shortcuts2.register();
+
 	// register an indivisual shortcut
-	var shortcut = new Shortcuts.Shortcut('Command+4', {
+	app.shortcut = new Shortcuts.Shortcut('Command+6', {
 		cmdOrCtrl: true,
 		toggle: true
 	}, app.shortcutPressed);
 });
 
 app.on('will-quit', function () {
-	Shortcuts.unregister();
+	app.shortcuts1.unregister();
+	app.shortcuts2.unregister();
+	app.shortcut.unregister();
 });

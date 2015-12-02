@@ -13,7 +13,7 @@ class Shortcut {
 		opts = opts || {};
 
 		if (!listener) {
-			throw new Error('Listener is invalid');
+			throw new TypeError('Listener is invalid');
 		}
 
 		// save arguments
@@ -37,8 +37,6 @@ class Shortcut {
 
 		if (opts.toggle) {
 			this.toggle(true);
-		} else {
-			this.register();
 		}
 	}
 
@@ -59,7 +57,6 @@ class Shortcut {
 
 	unregister() {
 		if (!globalShortcut.isRegistered(this._event)) {
-			console.warn('Event has not been registered', this._event);
 			return;
 		}
 
@@ -88,37 +85,41 @@ class Shortcut {
 }
 
 class Shortcuts {
-	constructor() {
+	constructor(events, opts, listener) {
 		this._shortcuts = {};
+
+		this.add(events, opts, listener);
+
+		return this;
 	}
 
-	register(events, opts, listener) {
-		opts = opts || {};
-
-		if (!Array.isArray(events)) {
-			events = [events];
-		}
+	register() {
+		var events = Object.keys(this._shortcuts);
 
 		for (var event of events) {
-			if (this._shortcuts[event]) {
-				throw new Error('Event already was registered');
-			}
-
-			var shortcut = new Shortcut(event, {
-				cmdOrCtrl: opts.cmdOrCtrl,
-				toggle: opts.toggle
-			}, listener);
-
-			this._shortcuts[event] = shortcut;
+			this._shortcuts[event].register();
 		}
 
 		return this;
 	}
 
-	unregister(events) {
-		if (!events) {
-			events = Object.keys(this._shortcuts);
+	unregister() {
+		var events = Object.keys(this._shortcuts);
+
+		for (var event of events) {
+			this._shortcuts[event].unregister();
 		}
+
+		return this;
+	}
+
+	add(events, opts, listener) {
+		if (typeof opts === 'function') {
+			listener = opts;
+			opts = {};
+		}
+
+ 		opts = opts || {};
 
 		if (!Array.isArray(events)) {
 			events = [events];
@@ -126,9 +127,36 @@ class Shortcuts {
 
 		for (var event of events) {
 			if (this._shortcuts[event]) {
+				throw new TypeError('Event already was registered');
+			}
+
+			this._shortcuts[event] =  new Shortcut(event, {
+				cmdOrCtrl: opts.cmdOrCtrl,
+				toggle: opts.toggle
+			}, listener);
+		}
+
+		return this;
+	}
+
+	remove(events) {
+		if (!events) {
+			throw new TypeError('Invalid events');
+		}
+
+		if (!Array.isArray(events)) {
+			events = [events];
+		}
+
+		// console.log('remove', events);
+
+		for (var event of events) {
+			if (this._shortcuts[event]) {
+				console.log(this._shortcuts[event]);
 				this._shortcuts[event].unregister();
 				delete this._shortcuts[event];
-				this._shortcuts[event] = null;
+				// this._shortcuts[event] = null;
+				console.log(this._shortcuts);
 			}
 		}
 
@@ -136,7 +164,5 @@ class Shortcuts {
 	}
 }
 
-const shortcuts = new Shortcuts();
-
-module.exports = shortcuts;
+module.exports = Shortcuts;
 module.exports.Shortcut = Shortcut;
