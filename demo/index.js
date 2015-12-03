@@ -51,6 +51,12 @@ app.on('activate-with-no-open-windows', () => {
 
 app.shortcutPressed = (e) => {
 	win.webContents.send('shortcut-pressed', e.event);
+	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.shortcuts.get(e.event)._originEvent);
+};
+
+app.anotherShortcutPressed = (e) => {
+	win.webContents.send('shortcut-pressed', e.event);
+	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.event);
 };
 
 app.on('ready', () => {
@@ -65,9 +71,9 @@ app.on('ready', () => {
 		'Command+3'
 	], {toggle: false}, app.shortcutPressed);
 
-	// add a new command
+	// add a new command and set
 	app.shortcuts2.add('Command+4', app.shortcutPressed);
-
+	app.shortcuts2.set('Command+4', app.anotherShortcutPressed);
 	// cancel a new command
 	app.shortcuts2.add('Command+5', app.shortcutPressed);
 	app.shortcuts2.remove('Command+5');

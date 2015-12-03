@@ -22,6 +22,7 @@ var shortcuts = new Shortcuts('Command+1', {toggle: true}, handler);
 var shortcuts = Shortcuts(['Command+2', 'Command+3'], {
 	toggle: false
 }, handler);
+
 shortcuts.register();
 
 // register an individual shortcut
@@ -33,7 +34,7 @@ var shortcut = new Shortcuts.Shortcut('Command+4', {
 
 ## Shortcuts
 
-### Shortcuts(input, [options], handler)
+### Shortcuts(events, [options], handler)
 
 Shortcuts supports that register a list of shortcut. Please refer parameters to [Shortcut](#Shortcut).
 
@@ -53,11 +54,19 @@ Add a new shortcut
 
 Remove a shortcut
 
+### get(event)
+
+Return shortcut by event name
+
+### set(event, [options], handler)
+
+Update shortcut with new options by event name
+
 ## Shortcut
 
 Shortcut class supports that register a individual shortcut
 
-### Shortcut(input, [options], handler)
+### Shortcut(events, [options], handler)
 
 #### input
 

@@ -50,6 +50,7 @@ class Shortcut {
 			if (this._listener) {
 				this._listener({
 					event: this._event,
+					shortcuts: this._shortcuts
 				}, this);
 			}
 		}.bind(this));
@@ -134,6 +135,8 @@ class Shortcuts {
 				cmdOrCtrl: opts.cmdOrCtrl,
 				toggle: opts.toggle
 			}, listener);
+
+			this._shortcuts[event]._shortcuts = this;
 		}
 
 		return this;
@@ -148,19 +151,23 @@ class Shortcuts {
 			events = [events];
 		}
 
-		// console.log('remove', events);
-
 		for (var event of events) {
 			if (this._shortcuts[event]) {
-				console.log(this._shortcuts[event]);
 				this._shortcuts[event].unregister();
 				delete this._shortcuts[event];
-				// this._shortcuts[event] = null;
-				console.log(this._shortcuts);
 			}
 		}
 
 		return this;
+	}
+
+	get(event) {
+		return this._shortcuts[event];
+	}
+
+	set(event, opts, listener) {
+		this.remove(event);
+		this.add(event, opts, listener);
 	}
 }
 
