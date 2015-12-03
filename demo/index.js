@@ -80,16 +80,9 @@ app.on('ready', () => {
 
 	// manuall register
 	app.shortcuts2.register();
-
-	// register an indivisual shortcut
-	app.shortcut = new Shortcuts.Shortcut('Command+6', {
-		cmdOrCtrl: true,
-		toggle: true
-	}, app.shortcutPressed);
 });
 
 app.on('will-quit', function () {
 	app.shortcuts1.unregister();
 	app.shortcuts2.unregister();
-	app.shortcut.unregister();
 });

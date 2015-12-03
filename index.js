@@ -166,10 +166,13 @@ class Shortcuts {
 	}
 
 	set(event, opts, listener) {
+		if (!this.get(event)) {
+			throw new TypeError('Invalid event');
+		}
+
 		this.remove(event);
 		this.add(event, opts, listener);
 	}
 }
 
 module.exports = Shortcuts;
-module.exports.Shortcut = Shortcut;
