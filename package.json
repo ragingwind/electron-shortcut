@@ -13,7 +13,6 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "xo && ava",
     "start": "electron ./demo"
   },
   "files": [
@@ -24,19 +23,10 @@
     "shortcut",
     "electron-shortcut"
   ],
-  "dependencies": {},
   "devDependencies": {
-    "ava": "^0.3.0",
     "electron-debug": "^0.2.1",
     "electron-packager": "^5.0.0",
     "electron-prebuilt": "^0.34.0"
-  },
-  "xo": {
-    "esnext": true,
-    "envs": [
-      "node",
-      "browser"
-    ]
   },
   "jshintConfig": {
     "esnext": true,
