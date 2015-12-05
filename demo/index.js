@@ -2,7 +2,7 @@
 const app = require('app');
 const path = require('path');
 const BrowserWindow = require('browser-window');
-const Shortcuts = require('../');
+const Shortcut = require('../');
 
 // report crashes to the Electron project
 require('crash-reporter').start();
@@ -51,7 +51,7 @@ app.on('activate-with-no-open-windows', () => {
 
 app.shortcutPressed = (e) => {
 	win.webContents.send('shortcut-pressed', e.event);
-	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.shortcuts.get(e.event)._originEvent);
+	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.event);
 };
 
 app.anotherShortcutPressed = (e) => {
@@ -63,26 +63,33 @@ app.on('ready', () => {
 	mainWindow = createMainWindow();
 
 	// register a shortcut
-	app.shortcuts1 = new Shortcuts('Command+1', {toggle: true}, app.shortcutPressed);
+	app.shortcut1 = new Shortcut('Command+1', {toggle: true}, app.shortcutPressed);
 
 	// register a shorcuts with no toggle option
-	app.shortcuts2 = new Shortcuts([
+	app.shortcut2 = new Shortcut([
 		'Command+2',
 		'Command+3'
 	], {toggle: false}, app.shortcutPressed);
 
 	// add a new command and set
-	app.shortcuts2.add('Command+4', app.shortcutPressed);
-	app.shortcuts2.set('Command+4', app.anotherShortcutPressed);
+	app.shortcut2.add('Command+4', app.shortcutPressed);
+	app.shortcut2.set('Command+4', app.anotherShortcutPressed);
 	// cancel a new command
-	app.shortcuts2.add('Command+5', app.shortcutPressed);
-	app.shortcuts2.remove('Command+5');
+	app.shortcut2.add('Command+5', app.shortcutPressed);
+	app.shortcut2.remove('Command+5');
 
 	// manuall register
-	app.shortcuts2.register();
+	app.shortcut2.register();
+
+	// using static method
+	Shortcut.register('Command+6', app.shortcutPressed);
+	Shortcut.register('Command+7', app.shortcutPressed);
+	Shortcut.register(['Command+8', 'Command+9'], app.shortcutPressed);
 });
 
 app.on('will-quit', function () {
-	app.shortcuts1.unregister();
-	app.shortcuts2.unregister();
+	app.shortcut1.unregister();
+	app.shortcut2.unregister();
+
+	Shortcut.unregister();
 });

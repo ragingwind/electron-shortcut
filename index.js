@@ -3,6 +3,10 @@
 const app = require('app');
 const globalShortcut = require('global-shortcut');
 
+function isArray(e) {
+	return !Array.isArray(e) ? [e] : e;
+}
+
 class Shortcut {
 	constructor(event, opts, listener) {
 		if (typeof opts === 'function') {
@@ -122,9 +126,7 @@ class Shortcuts {
 
  		opts = opts || {};
 
-		if (!Array.isArray(events)) {
-			events = [events];
-		}
+		events = isArray(events);
 
 		for (var event of events) {
 			if (this._shortcuts[event]) {
@@ -147,9 +149,7 @@ class Shortcuts {
 			throw new TypeError('Invalid events');
 		}
 
-		if (!Array.isArray(events)) {
-			events = [events];
-		}
+		events = isArray(events);
 
 		for (var event of events) {
 			if (this._shortcuts[event]) {
@@ -161,8 +161,15 @@ class Shortcuts {
 		return this;
 	}
 
-	get(event) {
-		return this._shortcuts[event];
+	get(events) {
+		var ret = [];
+
+		events = isArray(events);
+
+		for (var event of events) {
+			ret.push(this._shortcuts[event]);
+		}
+		return ret;
 	}
 
 	set(event, opts, listener) {
@@ -175,4 +182,32 @@ class Shortcuts {
 	}
 }
 
-module.exports = Shortcuts;
+module.exports = (function() {
+	let _shortcuts = null;
+
+	Shortcuts.register = (events, opts, listener) => {
+		if (!_shortcuts) {
+			_shortcuts = new Shortcuts(events, opts, listener);
+		} else {
+			_shortcuts.add(events, opts, listener);
+		}
+
+		for (var event of _shortcuts.get(events)) {
+			event.register();
+		}
+	};
+
+	Shortcuts.unregister = (events) => {
+		if (!_shortcuts) {
+			return;
+		}
+
+		if (events) {
+			_shortcuts.remove(events);
+		} else {
+			_shortcuts.unregister();
+		}
+	};
+
+	return Shortcuts;
+}());

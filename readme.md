@@ -1,6 +1,6 @@
-# electron-shortcut [![Build Status](https://travis-ci.org/ragingwind/electron-shortcut.svg?branch=master)](https://travis-ci.org/ragingwind/electron-shortcut)
+# electron-shortcut
 
-> Helper for global shortcut registering
+> Helper for registering global shortcut
 
 
 ## Install
@@ -26,11 +26,9 @@ var shortcut = Shortcut(['Command+2', 'Command+3'], {
 shortcut.register();
 ```
 
-## Shortcut
+## Shortcut(events, [options], handler)
 
-### Shortcut(shortcuts, [options], handler)
-
-#### shortcuts
+#### events
 
 Type: `string` or 'array'
 
@@ -41,29 +39,41 @@ Names for shortcut to register as global shortcut
 - `toggle`: default: false, Auto un/register shortcuts on application has focus.
 - `cmdOrCtrl`: default: false, All events of Command or Cmd will be changed into Control or Ctrl when your application runs on Windows or Linux.
 
-### register
+#### handler
+
+Global event handler for events
+
+### register()
 
 Register shortcuts with shortcut list already added.
 
-### unregister
+### unregister()
 
 Unregister shortcuts with shortcut list already added.
 
-### add
+### add(events, [options], handler)
 
 Add a new shortcut
 
-### remove
+### remove(events)
 
-Remove a shortcut
+Remove a shortcut. If events is not set, remove all of events.
 
-### get(event)
+### get(events)
 
-Return shortcut by event name
+Return array of shortcut by event names
 
-### set(event, [options], handler)
+### set(events, [options], handler)
 
 Update shortcut with new options by event name
+
+## Shortcut.register(events, [options], handler)
+
+Register events with static method. See [Shortcut](#Shortcut) for more information.
+
+## Shortcut.unregister([events])
+
+Unregister events with static method
 
 ## License
 
