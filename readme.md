@@ -15,15 +15,19 @@ $ npm install --save electron-shortcut
 ```js
 const Shortcut = require('electron-shortcut');
 
-// create and register a shortcut with auto-register
-var shortcut = new Shortcut('Command+1', {toggle: true}, handler);
+// create and register a shortcut with auto-register when windows got focus
+var shortcut = new Shortcut('Command+1', handler);
 
 // create and register shortcuts with manual-register
 var shortcut = Shortcut(['Command+2', 'Command+3'], {
-	toggle: false
+	autoRegister: false
 }, handler);
 
 shortcut.register();
+
+// with static method
+Shortcut.register('Command+1', {autoRegister: true}, handler);
+Shortcut.unregister();
 ```
 
 ## Shortcut(events, [options], handler)
@@ -36,8 +40,8 @@ Names for shortcut to register as global shortcut
 
 #### options
 
-- `toggle`: default: false, Auto un/register shortcuts on application has focus.
-- `cmdOrCtrl`: default: false, All events of Command or Cmd will be changed into Control or Ctrl when your application runs on Windows or Linux.
+- `autoRegister`: default: true, Auto un/register shortcuts on windows got focus.
+- `cmdOrCtrl`: default: false, All events of Command or Cmd will be changed into Control or Ctrl by OS running your application on
 
 #### handler
 
@@ -69,7 +73,7 @@ Update shortcut with new options by event name
 
 ## Shortcut.register(events, [options], handler)
 
-Register events with static method. See [Shortcut](#Shortcut) for more information.
+Register events with static method. See [Shortcut](#shortcutevents-options-handler) for more information of arguments.
 
 ## Shortcut.unregister([events])
 

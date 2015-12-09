@@ -63,17 +63,21 @@ app.on('ready', () => {
 	mainWindow = createMainWindow();
 
 	// register a shortcut
-	app.shortcut1 = new Shortcut('Command+1', {toggle: true}, app.shortcutPressed);
+	app.shortcut1 = new Shortcut('Command+1', app.shortcutPressed);
 
-	// register a shorcuts with no toggle option
+	// register a shorcuts with no autoRegister option
 	app.shortcut2 = new Shortcut([
 		'Command+2',
 		'Command+3'
-	], {toggle: false}, app.shortcutPressed);
+	], {
+		autoRegister: false
+	}, app.shortcutPressed);
 
 	// add a new command and set
 	app.shortcut2.add('Command+4', app.shortcutPressed);
-	app.shortcut2.set('Command+4', app.anotherShortcutPressed);
+	// app.shortcut2.remove('Command+4');
+	// app.shortcut2.add('Command+4', app.anotherShortcutPressed);
+
 	// cancel a new command
 	app.shortcut2.add('Command+5', app.shortcutPressed);
 	app.shortcut2.remove('Command+5');

@@ -11,10 +11,12 @@ class Shortcut {
 	constructor(event, opts, listener) {
 		if (typeof opts === 'function') {
 			listener = opts;
-			opts = {};
+			opts = undefined;
 		}
 
-		opts = opts || {};
+		opts = opts || {
+			autoRegister: true
+		};
 
 		if (!listener) {
 			throw new TypeError('Listener is invalid');
@@ -23,12 +25,7 @@ class Shortcut {
 		// save arguments
 		this._event = this._originEvent = event;
 		this._listener = listener;
-
-		// check event
-		if (globalShortcut.isRegistered(this._event)) {
-			console.warn('Event already has been registered', event);
-			return;
-		}
+		this._opts = opts;
 
 		// change accelerator according to platform
 		if (opts.cmdOrCtrl && process.platform !== 'darwin') {
@@ -39,14 +36,11 @@ class Shortcut {
 			}
 		}
 
-		if (opts.toggle) {
-			this.toggle(true);
-		}
+		this.autoRegister = opts.autoRegister;
 	}
 
 	register() {
 		if (globalShortcut.isRegistered(this._event)) {
-			console.warn('Event already has been registered', this._event);
 			return;
 		}
 
@@ -68,7 +62,7 @@ class Shortcut {
 		globalShortcut.unregister(this._event);
 	}
 
-	toggle(on) {
+	set autoRegister(on) {
 		if (on) {
 			var _this = this;
 
@@ -86,6 +80,10 @@ class Shortcut {
 				this._on_blur = null;
 			}
 		}
+	}
+
+	get autoRegister() {
+		return this._on_focus && this._on_blur;
 	}
 }
 
@@ -119,13 +117,6 @@ class Shortcuts {
 	}
 
 	add(events, opts, listener) {
-		if (typeof opts === 'function') {
-			listener = opts;
-			opts = {};
-		}
-
- 		opts = opts || {};
-
 		events = isArray(events);
 
 		for (var event of events) {
@@ -133,12 +124,7 @@ class Shortcuts {
 				throw new TypeError('Event already was registered');
 			}
 
-			this._shortcuts[event] =  new Shortcut(event, {
-				cmdOrCtrl: opts.cmdOrCtrl,
-				toggle: opts.toggle
-			}, listener);
-
-			this._shortcuts[event]._shortcuts = this;
+			this._shortcuts[event] = new Shortcut(event, opts, listener);
 		}
 
 		return this;
@@ -161,24 +147,8 @@ class Shortcuts {
 		return this;
 	}
 
-	get(events) {
-		var ret = [];
-
-		events = isArray(events);
-
-		for (var event of events) {
-			ret.push(this._shortcuts[event]);
-		}
-		return ret;
-	}
-
-	set(event, opts, listener) {
-		if (!this.get(event)) {
-			throw new TypeError('Invalid event');
-		}
-
-		this.remove(event);
-		this.add(event, opts, listener);
+	get events() {
+		return this._shortcuts;
 	}
 }
 
@@ -192,12 +162,15 @@ module.exports = (function() {
 			_shortcuts.add(events, opts, listener);
 		}
 
-		for (var event of _shortcuts.get(events)) {
-			event.register();
+		if (opts && typeof opts !== 'function' && !opts.autoRegister) {
+			events = isArray(events);
+			for (let event of events) {
+				_shortcuts.events[event].register();
+			}
 		}
 	};
 
-	Shortcuts.unregister = (events) => {
+	Shortcuts.unregister = events => {
 		if (!_shortcuts) {
 			return;
 		}
