@@ -2,9 +2,14 @@
 
 const app = require('app');
 const globalShortcut = require('global-shortcut');
+const oassign = require('object-assign');
 
 function isArray(e) {
-	return !Array.isArray(e) ? [e] : e;
+	if (!Array.isArray(e)) {
+		e = [e];
+	}
+
+	return e;
 }
 
 class Shortcut {
@@ -14,9 +19,9 @@ class Shortcut {
 			opts = undefined;
 		}
 
-		opts = opts || {
+		opts = oassign({
 			autoRegister: true
-		};
+		}, opts);
 
 		if (!listener) {
 			throw new TypeError('Listener is invalid');
@@ -51,7 +56,7 @@ class Shortcut {
 					shortcuts: this._shortcuts
 				}, this);
 			}
-		}.bind(this));
+		});
 	}
 
 	unregister() {
@@ -64,26 +69,29 @@ class Shortcut {
 
 	set autoRegister(on) {
 		if (on) {
-			var _this = this;
+			const _this = this;
 
-			this._on_focus = () => {_this.register();};
-			this._on_blur = () => {_this.unregister();};
+			this._onFocus = () => {
+				_this.register();
+			};
 
-			app.on('browser-window-focus', this._on_focus);
-			app.on('browser-window-blur', this._on_blur);
-		} else {
-			if (this._on_focus && this._on_blur) {
-				app.removeListener('browser-window-focus', this._on_focus);
-				app.removeListener('browser-window-blur', this._on_blur);
+			this._onBlur = () => {
+				_this.unregister();
+			};
 
-				this._on_focus = null;
-				this._on_blur = null;
-			}
+			app.on('browser-window-focus', this._onFocus);
+			app.on('browser-window-blur', this._onBlur);
+		} else if (this._onFocus && this._onBlur) {
+			app.removeListener('browser-window-focus', this._onFocus);
+			app.removeListener('browser-window-blur', this._onBlur);
+
+			this._onFocus = null;
+			this._onBlur = null;
 		}
 	}
 
 	get autoRegister() {
-		return this._on_focus && this._on_blur;
+		return this._onFocus && this._onBlur;
 	}
 }
 
@@ -97,9 +105,7 @@ class Shortcuts {
 	}
 
 	register() {
-		var events = Object.keys(this._shortcuts);
-
-		for (var event of events) {
+		for (const event of Object.keys(this._shortcuts)) {
 			this._shortcuts[event].register();
 		}
 
@@ -107,9 +113,7 @@ class Shortcuts {
 	}
 
 	unregister() {
-		var events = Object.keys(this._shortcuts);
-
-		for (var event of events) {
+		for (const event of Object.keys(this._shortcuts)) {
 			this._shortcuts[event].unregister();
 		}
 
@@ -119,7 +123,7 @@ class Shortcuts {
 	add(events, opts, listener) {
 		events = isArray(events);
 
-		for (var event of events) {
+		for (const event of events) {
 			if (this._shortcuts[event]) {
 				throw new TypeError('Event already was registered');
 			}
@@ -137,7 +141,7 @@ class Shortcuts {
 
 		events = isArray(events);
 
-		for (var event of events) {
+		for (const event of events) {
 			if (this._shortcuts[event]) {
 				this._shortcuts[event].unregister();
 				delete this._shortcuts[event];
@@ -152,19 +156,19 @@ class Shortcuts {
 	}
 }
 
-module.exports = (function() {
+module.exports = (function () {
 	let _shortcuts = null;
 
 	Shortcuts.register = (events, opts, listener) => {
-		if (!_shortcuts) {
-			_shortcuts = new Shortcuts(events, opts, listener);
-		} else {
+		if (_shortcuts) {
 			_shortcuts.add(events, opts, listener);
+		} else {
+			_shortcuts = new Shortcuts(events, opts, listener);
 		}
 
 		if (opts && typeof opts !== 'function' && !opts.autoRegister) {
 			events = isArray(events);
-			for (let event of events) {
+			for (const event of events) {
 				_shortcuts.events[event].register();
 			}
 		}
@@ -182,5 +186,7 @@ module.exports = (function() {
 		}
 	};
 
+	Shortcuts.Shortcut = Shortcut;
+
 	return Shortcuts;
-}());
+})();
