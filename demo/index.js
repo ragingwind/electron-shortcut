@@ -19,15 +19,14 @@ function onClosed() {
 	mainWindow = null;
 }
 
-var win;
-var shortcut;
+let win;
 
 function createMainWindow() {
-	 win = new BrowserWindow({
+	win = new BrowserWindow({
 		width: 640,
 		height: 480,
-		'web-preferences' : {
-			'preload': path.join(__dirname, 'browser.js')
+		webPreferences: {
+			preload: path.join(__dirname, 'browser.js')
 		}
 	});
 
@@ -49,14 +48,14 @@ app.on('activate-with-no-open-windows', () => {
 	}
 });
 
-app.shortcutPressed = (e) => {
+app.shortcutPressed = e => {
 	win.webContents.send('shortcut-pressed', e.event);
-	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.event);
+	win.webContents.send('shortcut-status', `Setted event has been fired ${e.event}`);
 };
 
-app.anotherShortcutPressed = (e) => {
+app.anotherShortcutPressed = e => {
 	win.webContents.send('shortcut-pressed', e.event);
-	win.webContents.send('shortcut-status', 'Setted event has been fired ' + e.event);
+	win.webContents.send('shortcut-status', `Setted event has been fired ${e.event}`);
 };
 
 app.on('ready', () => {
@@ -91,7 +90,7 @@ app.on('ready', () => {
 	Shortcut.register(['Command+8', 'Command+9'], app.shortcutPressed);
 });
 
-app.on('will-quit', function () {
+app.on('will-quit', () => {
 	app.shortcut1.unregister();
 	app.shortcut2.unregister();
 
