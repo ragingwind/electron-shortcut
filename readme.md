@@ -19,7 +19,7 @@ const Shortcut = require('electron-shortcut');
 var shortcut = new Shortcut('Command+1', handler);
 
 // create and register shortcuts with manual-register
-var shortcut = Shortcut(['Command+2', 'Command+3'], {
+var shortcut = new Shortcut(['Command+2', 'Command+3'], {
 	autoRegister: false
 }, handler);
 
