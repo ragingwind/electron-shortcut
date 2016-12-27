@@ -1,10 +1,11 @@
 'use strict';
-const ipc = require('ipc');
 
-ipc.on('shortcut-pressed', shortcut => {
+const {ipcRenderer} = require('electron');
+
+ipcRenderer.on('shortcut-pressed', (e, shortcut) => {
 	document.querySelector('#shortcut-title').textContent = shortcut;
 });
 
-ipc.on('shortcut-status', status => {
+ipcRenderer.on('shortcut-status', (e, status) => {
 	document.querySelector('#shortcut-status').textContent = status;
 });
