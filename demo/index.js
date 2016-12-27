@@ -1,11 +1,11 @@
 'use strict';
-const app = require('app');
-const path = require('path');
-const BrowserWindow = require('browser-window');
-const Shortcut = require('../');
 
-// report crashes to the Electron project
-require('crash-reporter').start();
+const path = require('path');
+const electron = require('electron');
+
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const Shortcut = require('../');
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -30,7 +30,7 @@ function createMainWindow() {
 		}
 	});
 
-	win.loadUrl(`file://${__dirname}/index.html`);
+	win.loadURL(`file://${__dirname}/index.html`);
 	win.on('closed', onClosed);
 
 	return win;

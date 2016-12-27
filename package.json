@@ -25,9 +25,13 @@
     "electron-shortcut"
   ],
   "devDependencies": {
-    "electron-debug": "^0.2.1",
-    "electron-packager": "^5.2.0",
-    "electron-prebuilt": "^0.36.1"
+    "electron": "^1.4.8",
+    "electron-packager": "8.3.0",
+    "xo": "^0.17.1"
+  },
+  "dependencies": {
+    "electron-debug": "^1.1.0",
+    "object-assign": "^4.0.1"
   },
   "xo": {
     "esnext": true,
@@ -39,8 +43,5 @@
   "jshintConfig": {
     "esnext": true,
     "node": true
-  },
-  "dependencies": {
-    "object-assign": "^4.0.1"
   }
 }

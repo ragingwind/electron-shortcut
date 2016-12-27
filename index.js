@@ -1,7 +1,6 @@
 'use strict';
 
-const app = require('app');
-const globalShortcut = require('global-shortcut');
+const {app, globalShortcut} = require('electron');
 const oassign = require('object-assign');
 
 function isArray(e) {
